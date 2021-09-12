@@ -1,0 +1,28 @@
+<html>
+    <head>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    </head>
+    <script>
+        $(document).ready(function(){
+            $.getJSON('/pdf',function(data){
+                var len=data.length;
+                for(i=0;i<len;i++){
+                    $('#pdf').append(`<div><img src="${data[i]}" "/></div>`)
+                }
+            })
+           // $("#pdf").src="1-0.pdf"
+        })
+    </script>
+<body>
+    <h1> Pdf Test</h1>
+    <p>
+        <div id="pdf"></div>
+    </p>
+    <p>
+
+        <!-- <object height="100%" width="80%">
+            <embed src="1.pdf#toolbar=0" height="100%" width="100%"/>
+        </object> -->
+    </p>
+</body>
+</html>
