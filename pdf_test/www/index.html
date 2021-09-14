@@ -4,7 +4,7 @@
     </head>
     <script>
         $(document).ready(function(){
-            $.getJSON('/pdf',function(data){
+            $.getJSON('/pdf/2.pdf',function(data){
                 var len=data.length;
                 for(i=0;i<len;i++){
                     $('#pdf').append(`<div><img src="${data[i]}" "/></div>`)
@@ -16,7 +16,8 @@
 <body>
     <h1> Pdf Test</h1>
     <p>
-        <div id="pdf"></div>
+        <div id="pdf" style="text-align:center;">
+        </div>
     </p>
     <p>
 

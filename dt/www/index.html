@@ -1,0 +1,43 @@
+<head>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
+
+    <script src="http://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+
+            $.post('/data', function (res) {
+                console.log(res)
+            })
+
+            $('#dt').DataTable({
+                "pageLength":2,
+                "processing": false,
+                "serverSide": true,
+                "ajax": "/data"
+            })
+        })
+    </script>
+</head>
+
+<body>
+    <h1>
+        Api data datatables
+    </h1>
+    <div>
+        <table id="dt">
+
+            <thead>
+                <tr>
+                    <th>id</th>
+                    <th>name</th>
+                </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+</body>
