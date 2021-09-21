@@ -1,6 +1,40 @@
-
-
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
+    $(document).ready(function () {
+
+        $('#upload').click(function () {
+            var data = $('#doc')[0].files[0]
+            var formData = new FormData();
+            // formData.append("file", new Blob([data], { type: "application/octet-stream" }));
+            
+            formData.append("file", data);
+            formData.append("name", data.name);
+
+
+
+
+
+            $.ajax({
+                url: '/upload',
+                method: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                enctype: 'multipart/form-data',
+                processData: false,
+                success: function (res) {
+                    alert('ok')
+                },
+                fail: function (res) {
+                    alert('fail ,' + res)
+                }
+            })
+        })
+
+    })
+
 </script>
 
 <!-- <form ref='uploadForm' 
@@ -13,7 +47,5 @@ encType="multipart/form-data">
 </form> -->
 
 
-<form>
-    <input type="file" name="doc">
-    <input type="submit" value="upload">
-</form>
+<input id="doc" type="file" name="doc">
+<input id="upload" type="submit" value="upload">

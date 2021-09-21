@@ -23,19 +23,21 @@ app.get('/',function(req,res,next){
 
 app.post('/upload',function(req,res,next){
 
-    const file = req.files.doc
-    console.log(file)
+    const file = req.files.file
+    console.log('file-->',file)
+    
 
 
-    const ext = path.extname(file.name)
+
+     const ext = path.extname(file.name)
     const fileName= moment().format('YYYY-MM-DD_HHmmss')
     const uploadPath = root+'/public/files/'+fileName+ext
 
     file.mv(uploadPath, function(err) {
         if (err)
-          return res.status(500).send(err);
+          return res.status(500).json({success:fail,message:err});
     
-        res.send('File uploaded!');
+        res.json({success:true,message:'File uploaded!'});
       });
     
     
