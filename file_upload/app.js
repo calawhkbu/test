@@ -1,9 +1,16 @@
 const express = require('express')
 const moment = require('moment')
 const app = express()
+const FileUpload = require('express-fileupload')
+const path = require('path')
 
 const root = require('path').resolve('./')
 app.use(express.static('./public')) //allow static files
+
+app.use(FileUpload({
+    useTempFiles : true,
+    tempFileDir : './tmp/'
+}));
 
 
 
@@ -15,6 +22,22 @@ app.get('/',function(req,res,next){
 
 
 app.post('/upload',function(req,res,next){
+
+    const file = req.files.doc
+    console.log(file)
+
+
+    const ext = path.extname(file.name)
+    const fileName= moment().format('YYYY-MM-DD_HHmmss')
+    const uploadPath = root+'/public/files/'+fileName+ext
+
+    file.mv(uploadPath, function(err) {
+        if (err)
+          return res.status(500).send(err);
+    
+        res.send('File uploaded!');
+      });
+    
     
 })
 
