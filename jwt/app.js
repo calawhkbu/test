@@ -26,7 +26,7 @@ app.set('view engine', 'ejs');
 
 
 //init csrf token
-app.all('*', function (req, res,next) {
+app.use('*', function (req, res,next) {
     res.cookie('csrf', req.csrfToken())
     next()
   })
@@ -35,9 +35,24 @@ app.use(base)
 app.use(getAll)
 
 
-app.get('/',csrfProtection,function(req,res,next){
+app.get('/',function(req,res,next){
 
     res.render('pages/index',{csrf:req.cookies.csrf})
+})
+
+
+app.get('/profile',function(req,res,next){
+
+    res.render('pages/profile',{csrf:req.cookies.csrf})
+})
+
+app.get('/logout',function(req,res){
+
+    res.clearCookie('token')
+    res.clearCookie('_csrf')
+    res.clearCookie('csrf')
+    res.end('cookie all cleared. ')
+
 })
 
 app.listen(80,function(){

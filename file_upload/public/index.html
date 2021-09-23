@@ -25,7 +25,12 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (res) {
-                    alert('ok')
+                    if(res.success){
+                        alert('ok')
+
+                    }else{
+                        alert('Failed, '+res.message)
+                    }
                 },
                 fail: function (res) {
                     alert('fail ,' + res)

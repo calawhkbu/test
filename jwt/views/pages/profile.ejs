@@ -1,0 +1,28 @@
+
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script>
+    $(document).ready(function(){
+
+        $.ajaxSetup({
+   headers: {"X-CSRF-Token": "<%=csrf%>" }
+}); 
+
+        $.get('/data',function(res){
+            console.log(res)
+        })
+
+        $.post('/data',{data:"1234"},function(res){
+            console.log(res)
+            console.log('post')
+        })
+
+})
+</script>
+<body csrf="<%=csrf%>">
+    <h1>Profile Page</h1>
+    <div>
+        Input 1 2
+        <input type="text">
+    </div>
+</body>
