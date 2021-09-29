@@ -27,10 +27,17 @@
 
 
 
+                    //File Size
                     if (file.size > FILE_MAX_SIZE_MB * 1024 * 1024) {
                         throw new Error('Exceed File Size, Limit is ' + FILE_MAX_SIZE_MB + " MB")
                         cbs.failure('Exceed File Size')
 
+                    }
+
+                    //File Type
+                    if(!fileType.find(o=>o==file.type)){
+                        throw new Error('File Type Not Accepted')
+                        cbs.failure('File Type Not Accepted')
                     }
 
 

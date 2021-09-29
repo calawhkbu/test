@@ -27,6 +27,13 @@ app.post('/upload', function (req, res, next) {
     console.log(file)
     console.log(file.name)
 
+    const LIMIT_MB=2
+
+    if(file.size > LIMIT_MB * 1024 * 1024) {
+        return res.status(413).json({success:false,message:"Exceeds File Size Limit "+ LIMIT_MB+" MB"})
+
+    }
+
 
     var uploadPath = root + '/public/' + file.name;
     file.mv(uploadPath, function (err) {
