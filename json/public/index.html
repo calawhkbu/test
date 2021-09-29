@@ -4,6 +4,8 @@
 <head>
     <meta charset="utf-8" />
     <title>JSON Editor Upload Example</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
 </head>
 
@@ -13,95 +15,129 @@
     <div id='editor_holder'></div>
     <button id='submit'>Submit (console.log)</button>
     <script>
-        // Specify theme
-        JSONEditor.defaults.options.theme = 'html';
+        $(document).ready(function () {
+            // Specify theme
+            JSONEditor.defaults.options.theme = 'html';
 
-        // Specify upload handler
-        JSONEditor.defaults.callbacks.upload = {
-            "testUploadHandler": function (jseditor, type, file, cbs) {
-                const FILE_MAX_SIZE_MB = 2
+            // Specify upload handler
+            JSONEditor.defaults.callbacks.upload = {
+                "testUploadHandler": function (jseditor, type, file, cbs) {
+                    const FILE_MAX_SIZE_MB = 2
+                    const fileType = ['application/pdf', 'image/*']
 
 
-                if (file.size > FILE_MAX_SIZE_MB * 1024 * 1024) {
-                    throw new Error('Exceed File Size, Limit is ' + FILE_MAX_SIZE_MB + " MB")
-                    cbs.failure('Exceed File Size')
-                    alert('Exceed File Size' + FILE_MAX_SIZE_MB + " MB")
-                    return
-                }
-                debugger
-                if (type === 'root.upload_fail') cbs.failure('Upload failed');
-                else {
-                    var tick = 0;
 
-                    var tickFunction = function () {
-                        tick += 1;
-                        console.log('progress: ' + tick);
+                    if (file.size > FILE_MAX_SIZE_MB * 1024 * 1024) {
+                        throw new Error('Exceed File Size, Limit is ' + FILE_MAX_SIZE_MB + " MB")
+                        cbs.failure('Exceed File Size')
 
-                        if (tick < 100) {
-                            cbs.updateProgress(tick);
-                            window.setTimeout(tickFunction, 50)
-                        } else if (tick == 100) {
-                            cbs.updateProgress();
-                            window.setTimeout(tickFunction, 500)
-                        } else {
-                            editor.setValue({
-                                name: file.name,
-                                fileSize:file.size,
-                                fileType:file.type
-                            });
-                            cbs.success(file.name);
-                        }
-                    };
+                    }
 
-                    window.setTimeout(tickFunction)
-                }
-            }
-        }
 
-        // Initialize the editor with a JSON schema
-        var editor = new JSONEditor(document.getElementById('editor_holder'), {
-            schema: {
-                type: "object",
-                title: "Image",
-                properties: {
-                    upload_default: {
-                        type: "string",
-                        format: "url",
-                        description: "Max File Size 2MB",
-                        options: {
-                            upload: {
-                                upload_handler: "testUploadHandler"
+                    if (type === 'root.upload_fail') cbs.failure('Upload failed');
+                    else {
+                        var tick = 0;
+                        var formData = new FormData()
+                        formData.append('file', file)
+
+
+                        $.ajax({
+                            url: "/upload",
+                            type: 'POST',
+                            data: formData,
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            enctype: 'multipart/form-data',
+                            processData: false,
+                            success: function (res) {
+                                console.log(res)
+                            },
+                            failure: function (res) {
+                                console.log('fail')
+                                console.log(res)
+
                             }
-                        },
-                        "links": [
-                            {
-                                "href": "{{self}}"
+
+
+                        })
+
+                        var tickFunction = function () {
+                            tick += 10;
+                            console.log('progress: ' + tick);
+
+                            if (tick < 100) {
+                                cbs.updateProgress(tick);
+                                window.setTimeout(tickFunction, 50)
+                            } else if (tick == 100) {
+                                cbs.updateProgress();
+                                window.setTimeout(tickFunction, 500)
+                            } else {
+                                editor.setValue({
+                                    name: file.name,
+                                    fileSize: file.size,
+                                    fileType: file.type
+                                });
+                                editor.getEditor('root.name').disable();
+                                editor.getEditor('root.fileType').disable();
+                                editor.getEditor('root.fileSize').disable();
+                                cbs.success(file.name);
                             }
-                        ]
-                    },
-                    name: {
-                        type: "string"
-                    },
-                    fileType:{
-                        type:"string"
-                    },
-                    fileSize:{
-                        type:"string"
+                        };
+
+                        window.setTimeout(tickFunction)
                     }
                 }
             }
-        });
 
-        // editor.setValue({
-        //   upload_default: "",
-        //   name: ""
-        // });
+            // Initialize the editor with a JSON schema
+            var editor = new JSONEditor(document.getElementById('editor_holder'), {
+                schema: {
+                    type: "object",
+                    title: "Image",
+                    properties: {
+                        upload_default: {
+                            type: "string",
+                            format: "url",
+                            description: "Max File Size 2MB",
+                            options: {
+                                upload: {
+                                    upload_handler: "testUploadHandler"
+                                }
+                            }
 
-        // Hook up the submit button to log to the console
-        document.getElementById('submit').addEventListener('click', function () {
-            // Get the value from the editor
-            console.log(editor.getValue());
-        });
+                        },
+                        name: {
+                            type: "string",
+
+
+                        },
+                        fileType: {
+                            type: "string",
+
+                        },
+                        fileSize: {
+                            type: "string",
+
+                        }
+                    }
+                }
+            });
+
+
+            editor.getEditor('root.name').disable();
+            editor.getEditor('root.fileType').disable();
+            editor.getEditor('root.fileSize').disable();
+
+
+            // Hook up the submit button to log to the console
+            document.getElementById('submit').addEventListener('click', function () {
+                // Get the value from the editor
+                console.log(editor.getValue());
+            });
+
+        })
+
     </script>
 
 </body>
