@@ -19,6 +19,7 @@
 
             window.JSONEditor.defaults.callbacks.template = {
                 "calcTotal": (jseditor, e) => {
+                    console.log(jseditor)
                     var data = e.data
                     if (!data) return 0;
                     return data.reduce((old, curr) => {

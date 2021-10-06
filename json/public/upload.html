@@ -19,6 +19,20 @@
             // Specify theme
             JSONEditor.defaults.options.theme = 'html';
             JSONEditor.defaults.options.enable_drag_drop = true
+            
+
+
+            //template handler
+            JSONEditor.defaults.callbacks.template={
+                uploadedFiles:function(jseditor,e){
+                    console.log(jseditor)
+                    console.log(e)
+
+                    debugger
+
+                    this.fileDisplay.value="abc.pdf"
+                }
+            }
             // Specify upload handler
             JSONEditor.defaults.callbacks.upload = {
                 "testUploadHandler": function (jseditor, type, file, cbs) {
@@ -35,7 +49,7 @@
                     }
 
                     //File Type
-                    if(!fileType.find(o=>o==file.type)){
+                    if (!fileType.find(o => o == file.type)) {
                         throw new Error('File Type Not Accepted')
                         cbs.failure('File Type Not Accepted')
                     }
@@ -107,29 +121,34 @@
                             type: "string",
                             format: "url",
                             description: "Max File Size 2MB",
+                            default:"abc",
+                            links:[{
+                                href:"1.pdf"
+                            }],
+                            template:"uploadedFiles",
                             options: {
-                                upload: {
-                                    upload_handler: "testUploadHandler"
+                                    upload: {
+                                        upload_handler: "testUploadHandler"
+                                    }
                                 }
+
+                            },
+                            name: {
+                                type: "string",
+
+
+                            },
+                            fileType: {
+                                type: "string",
+
+                            },
+                            fileSize: {
+                                type: "string",
+
                             }
-
-                        },
-                        name: {
-                            type: "string",
-
-
-                        },
-                        fileType: {
-                            type: "string",
-
-                        },
-                        fileSize: {
-                            type: "string",
-
                         }
                     }
-                }
-            });
+                });
 
 
             editor.getEditor('root.name').disable();
