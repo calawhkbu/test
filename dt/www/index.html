@@ -5,21 +5,8 @@
 
     <script src="http://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
+    <link rel="stylesheet" href="main.css">
 
-            $.post('/data', function (res) {
-                console.log(res)
-            })
-
-            $('#dt').DataTable({
-                "pageLength":2,
-                "processing": false,
-                "serverSide": true,
-                "ajax": "/data"
-            })
-        })
-    </script>
 </head>
 
 <body>
@@ -27,17 +14,53 @@
         Api data datatables
     </h1>
     <div>
-        <table id="dt">
+        <table id="dt" style="width:100%;">
 
             <thead>
-                <tr>
-                    <th>id</th>
-                    <th>name</th>
-                </tr>
+                <th>id</th>
+                <th>message</th>
             </thead>
             <tbody>
 
             </tbody>
         </table>
+
+
+
     </div>
 </body>
+<script>
+    $(document).ready(function () {
+
+
+
+        const data = [
+            [1, "<b>1234</b>", "Manager"],
+            [2, "<b>abcd</b>", "Calvin"],
+            [3, "<b>cat</b>", "SanKuen"],
+            [4, "<b>hkbu@1</b>", "Happy"],
+
+        ]
+
+        $('#dt').DataTable({
+            "pageLength": 10,
+            "data": data,
+            columnDefs: [{
+                "targets": [0],
+                "visible": false,
+                "searchable": false
+            },
+            {
+                "targets": [1],
+                "render": function (data, type, row, meta) {
+
+                    return `<div class="container_chat">
+            <p>${data}</p>
+            <span class="time-${meta.row % 2 == 0 ? "left" : "right"}">${row[2]}</span>
+          </div>`;
+                }
+            }
+            ]
+        })
+    })
+</script>
