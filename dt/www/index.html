@@ -1,15 +1,28 @@
 <head>
+
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"
         integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+        crossorigin="anonymous"></script>
     <link rel="stylesheet" href="https://cdn.datatables.net/1.11.1/css/jquery.dataTables.min.css">
 
     <script src="http://cdn.datatables.net/1.11.1/js/jquery.dataTables.min.js"></script>
 
     <link rel="stylesheet" href="main.css">
 
+    <!-- select  -->
+    <script type="text/javascript" language="javascript" src="https://cdn.datatables.net/select/1.3.1/js/dataTables.select.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/select/1.3.1/css/select.dataTables.min.css">
+
+
 </head>
 
-<body>
+<body class="container">
     <h1>
         Api data datatables
     </h1>
@@ -17,17 +30,26 @@
         <table id="dt" style="width:100%;">
 
             <thead>
+                <th></th>
                 <th>id</th>
                 <th>message</th>
+
             </thead>
             <tbody>
-
             </tbody>
         </table>
-
-
+        <button class='del'> Delete </button>
+    </div>
+    <label>Add Remarks:</label>
+    <div class="row">
+        <textarea class="form-control"></textarea>
 
     </div>
+    <div class=" d-flex justify-content-center mt-3" style="text-align: center;">
+        <button>Submit</button>
+        <button>Clear</button>
+    </div>
+
 </body>
 <script>
     $(document).ready(function () {
@@ -35,32 +57,48 @@
 
 
         const data = [
-            [1, "<b>1234</b>", "Manager"],
-            [2, "<b>abcd</b>", "Calvin"],
-            [3, "<b>cat</b>", "SanKuen"],
-            [4, "<b>hkbu@1</b>", "Happy"],
+            ["",1, "<b>1234</b>", "Manager"],
+            ["",2, "<b>abcd</b>", "Calvin"],
+            ["",3, "<b>cat</b>", "SanKuen"],
+            ["",4, "<b>hkbu@1</b>", "Happy"],
 
         ]
 
-        $('#dt').DataTable({
-            "pageLength": 10,
+        var table =$('#dt').DataTable({
+            "pageLength": 2,
             "data": data,
-            columnDefs: [{
-                "targets": [0],
-                "visible": false,
-                "searchable": false
-            },
-            {
-                "targets": [1],
-                "render": function (data, type, row, meta) {
+            columnDefs: [
+                {
+                    orderable: false,
+                    className: 'select-checkbox',
+                    targets: 0
+                } ,
+                {
+                    "targets": [2],
+                    "render": function (data, type, row, meta) {
 
-                    return `<div class="container_chat">
+                        return `<div class="container_chat">
             <p>${data}</p>
-            <span class="time-${meta.row % 2 == 0 ? "left" : "right"}">${row[2]}</span>
+            <span class="time-${meta.row % 2 == 0 ? "left" : "right"}">${row[3]}</span>
           </div>`;
+                    }
                 }
-            }
-            ]
+            ],
+            select: {
+                style: 'multi',
+                selector: 'td:first-child'
+            },
+            order: [[ 1, 'asc' ]]
+
         })
+
+        //get Ids of selected
+        $('.del').click(function(){
+            var data= table.rows({selected:true}).data()
+            debugger
+            console.log(data)
+
+        })
+
     })
 </script>
