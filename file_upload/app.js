@@ -4,6 +4,7 @@ const app = express()
 const FileUpload = require('express-fileupload')
 const path = require('path')
 
+const fs = require('fs')
 const root = require('path').resolve('./')
 app.use(express.static('./public')) //allow static files
 
@@ -19,6 +20,13 @@ app.get('/',function(req,res,next){
 
     console.log(req)
     res.end('ok')
+})
+
+app.get('/get',function(req,res,next){
+
+  let buffer = fs.readFileSync('public/files/1.pdf')
+  return res.json(buffer)
+
 })
 
 

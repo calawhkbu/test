@@ -1,15 +1,36 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"
     integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+    integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
 <script>
     $(document).ready(function () {
 
+
+        $('#get').click(async function () {
+            let buffer = await $.getJSON('/get')
+            if(buffer && buffer.data){
+                buffer = new Uint8Array(buffer.data)
+                let dataURI = _arrayBufferToBase64(buffer)
+                debugger
+                let blob = new Blob([buffer],{type:'application/pdf'})
+                let url = URL.createObjectURL(blob)
+                
+                $('#iframe').attr('src','data:application/pdf;base64,'+dataURI)
+            }
+            
+
+
+        })
+
+
         $('#upload').click(function () {
+
+
             var data = $('#doc')[0].files[0]
             var formData = new FormData();
             // formData.append("file", new Blob([data], { type: "application/octet-stream" }));
-            
+
             formData.append("file", data);
             formData.append("name", data.name);
 
@@ -27,11 +48,11 @@
                 enctype: 'multipart/form-data',
                 processData: false,
                 success: function (res) {
-                    if(res.success){
+                    if (res.success) {
                         alert('ok')
 
-                    }else{
-                        alert('Failed, '+res.message)
+                    } else {
+                        alert('Failed, ' + res.message)
                     }
                 },
                 fail: function (res) {
@@ -41,6 +62,16 @@
         })
 
     })
+
+    function _arrayBufferToBase64( buffer ) {
+    var binary = '';
+    var bytes = new Uint8Array( buffer );
+    var len = bytes.byteLength;
+    for (var i = 0; i < len; i++) {
+        binary += String.fromCharCode( bytes[ i ] );
+    }
+    return window.btoa( binary );
+}
 
 </script>
 
@@ -56,3 +87,10 @@ encType="multipart/form-data">
 
 <input id="doc" type="file" name="doc">
 <input id="upload" type="submit" value="upload">
+<div>
+    <button id="get">GET</button>
+
+</div>
+<div>
+    <iframe id="iframe" style="width:100%;height:100%"></iframe>
+</div>
