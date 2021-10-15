@@ -31,7 +31,8 @@ app.get('/get',function(req,res,next){
 })
 
 app.get('/view',function(req,res,next){
-  var stream = fs.createReadStream('public/files/1.pdf');
+  var stream = fs.createReadStream('public/files/2021-09-23_210046.pdf');
+
   var filename = "1.pdf"; 
   // Be careful of special characters
 

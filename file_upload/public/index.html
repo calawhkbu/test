@@ -12,13 +12,26 @@
             if(buffer && buffer.data){
                 buffer = new Uint8Array(buffer.data)
                 let dataURI = _arrayBufferToBase64(buffer)
-                debugger
+                
                 let blob = new Blob([buffer],{type:'application/pdf'})
                 let url = URL.createObjectURL(blob)
                 
-                $('#iframe').attr('src','data:application/pdf;base64,'+dataURI)
+               // $('#iframe').attr('src','data:application/pdf;base64,'+dataURI)
+             $('#iframe').attr('src',url)
+
             }
         })
+
+
+
+        $('input[type="file"]').on('change',function(e){
+            let file = e.currentTarget.files[0]
+            console.log(file)
+            
+            $('#msg').html(file.type)
+        })
+
+
 
 
         $('#upload').click(function () {
@@ -84,6 +97,7 @@ encType="multipart/form-data">
 
 <input id="doc" type="file" name="doc">
 <input id="upload" type="submit" value="upload">
+<div id="msg"></div>
 <div>
     <button id="get">GET</button>
 
