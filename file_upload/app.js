@@ -4,6 +4,7 @@ const app = express()
 const FileUpload = require('express-fileupload')
 const path = require('path')
 
+
 const fs = require('fs')
 const root = require('path').resolve('./')
 app.use(express.static('./public')) //allow static files
@@ -27,6 +28,21 @@ app.get('/get',function(req,res,next){
   let buffer = fs.readFileSync('public/files/1.pdf')
   return res.json(buffer)
 
+})
+
+app.get('/view',function(req,res,next){
+  var stream = fs.createReadStream('public/files/1.pdf');
+  var filename = "1.pdf"; 
+  // Be careful of special characters
+
+  filename = encodeURIComponent(filename);
+  // Ideally this should strip them
+
+  res.setHeader('Content-disposition', 'inline; filename="' + filename + '"');
+  res.setHeader('Content-type', 'application/pdf');
+  
+  stream.pipe(res);
+  
 })
 
 
