@@ -4,12 +4,14 @@
 <head>
     <meta charset="utf-8" />
     <title>JSON Editor Upload Example</title>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"
-        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script> 
-   <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+    <!-- <script src="https://code.jquery.com/jquery-3.6.0.min.js"
+        integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>  -->
 
 
-    <!-- bootstrap and jquery
+    <!-- <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script> -->
+
+
+    <!-- bootstrap and jquery -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
         integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
     <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -20,110 +22,290 @@
         crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
         integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
-        crossorigin="anonymous"></script> -->
+        crossorigin="anonymous"></script>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+
 
 </head>
 
-<body class="container" data-spy="scroll" data-target="#navbar-example2" data-offset="0">
+<body>
+    <menu>
+        <ul id="menu" style="position: sticky;top:10px">
+            <li class="active"> <a href="#root[studentNo]"> SID 2 </a> </li>
+        </ul>
 
-    <div class="m-3" >
+    </menu>
+    <div class="m-3">
         <h1>JSON Editor Upload Example</h1>
-        
 
-       
-  
-    <div id='editor_holder'></div>
-    <button id='submit'>Submit (console.log)</button>
-    <script>
-        $(document).ready(function () {
 
-            window.JSONEditor.defaults.callbacks.template = {
-                "calcTotal": (jseditor, e) => {
-                    console.log(jseditor)
-                    var data = e.data
-                    if (!data) return 0;
-                    return data.reduce((old, curr) => {
-                        return old + curr.amount
-                    }, 0)
+
+        <style>
+            :root {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                display: flex;
+                flex-wrap: wrap;
+
+                @mixin mp-0 {
+                    margin: 0;
+                    padding: 0;
                 }
-            };
-            //Initialize the editor with a JSON schema
-            var editor = new JSONEditor(document.getElementById('editor_holder'), {
-                schema: {
-                    type: "object",
-                    title: "testing",
-                    properties: {
-                        table: {
-                            type: "array",
-                            format: "table",
-                            items: {
-                                type: "object",
-                                properties: {
-                                    donor: {
-                                        type: "string",
-                                        default: ""
-                                    },
-                                    amount: {
-                                        type: "number",
-                                        default: 0
+
+                @include mp-0;
+
+                menu {
+
+                    $w: 200px;
+                    display: block;
+                    @include mp-0;
+                    $h: 100vh;
+                    width: $w;
+
+                    ul {
+                        @include mp-0;
+                        margin: 0;
+                        padding: 0;
+                        list-style: none;
+                        position: fixed;
+                        width: $w;
+                        height: $h;
+                        background: #ccc;
+                        top: 0;
+                        left: 0;
+
+                        li {
+                            transition: .3s;
+                            padding: .5rem;
+
+                            & a {
+                                color: white;
+                            }
+
+                        }
+
+                        a {
+                            color: #222;
+                            text-decoration: none;
+
+                        }
+
+                    }
+                }
+            }
+
+            .active {
+                background-color: pink;
+            }
+        </style>
+
+        <div id='editor_holder'></div>
+        <button id='submit'>Submit (console.log)</button>
+        <div id="end">END</div>
+        <script>
+            $(document).ready(function () {
+
+                let menuSection = document.querySelectorAll('menu li');
+
+                // for clickable event
+                menuSection.forEach(v => {
+                    v.onclick = (() => {
+                        setTimeout(() => {
+                            menuSection.forEach(j => j.classList.remove('active'))
+                            v.classList.add('active')
+                        }, 300)
+                    })
+                })
+
+                // for window scrolldown event
+
+                window.onscroll = (() => {
+                    let mainSection = document.querySelectorAll('div.col-md-12');
+                    console.log(mainSection.length)
+
+                    mainSection.forEach((v, i) => {
+
+
+                        let rect = v.getBoundingClientRect().y
+                        // console.log("i",i)
+                        // console.log("rect",rect)
+                        // console.log("window.innerHeight",window.innerHeight)
+
+                        let schema = v.getAttribute('data-schemapath')
+                        schema = schema.split('.')
+                        schema = schema[0] + `[${schema[1]}]`
+                        console.log(schema)
+
+                        if (rect > window.innerHeight - 10) {
+                            console.log('ok')
+                            menuSection.forEach(v => {
+                                v.classList.remove('active')
+
+                            })
+
+
+
+
+                            $('a[href="#' + schema + '"]')[0].classList.add('active')
+
+
+
+                            // menuSection[i] && menuSection[i].classList.add('active')
+                        } else {
+                            $('a[href="#' + schema + '"]')[0].classList.remove('active')
+
+                        }
+                    })
+                })
+
+                window.JSONEditor.defaults.callbacks.template = {
+                    "calcTotal": (jseditor, e) => {
+                        console.log(jseditor)
+                        var data = e.data
+                        if (!data) return 0;
+                        return data.reduce((old, curr) => {
+                            return old + curr.amount
+                        }, 0)
+                    }
+                };
+                //Initialize the editor with a JSON schema
+                var editor = new JSONEditor(document.getElementById('editor_holder'), {
+                    schema: {
+                        type: "object",
+                        title: "testing",
+                        properties: {
+                            table: {
+                                type: "array",
+                                format: "table",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        donor: {
+                                            type: "string",
+                                            default: ""
+                                        },
+                                        amount: {
+                                            type: "number",
+                                            default: 0
+                                        }
+                                    }
+                                }
+                            },
+                            studentNo: {
+                                type: "string"
+                            },
+                            firstName: {
+                                type: "string"
+                            },
+                            lastName: {
+                                type: "string"
+                            },
+                            planCode: {
+                                type: "string"
+                            },
+                            studyYear: {
+                                type: "string"
+                            },
+                            mobile: {
+                                type: "string"
+                            },
+                            email: {
+                                type: "string"
+                            },
+                            address: {
+                                type: "string",
+                                format: "textarea"
+                            },
+                            CGA: {
+                                type: "number"
+                            },
+                            remakrs: {
+                                type: "string"
+                            },
+
+                            action: {
+                                type: 'array',
+                                format: "table",
+                                items: {
+                                    type: "object",
+                                    properties: {
+                                        studentStatus: {
+                                            type: "string"
+                                        },
+                                        staffStatus: {
+                                            type: "string"
+                                        },
+                                        action: {
+                                            type: "array",
+                                            items: {
+                                                type: "object",
+                                                properties:{
+                                                    button:{
+                                                        type:"string"
+                                                    },
+                                                    mapping:{
+                                                        type:"string",
+                                                        watch:{
+                                                            data:"action"
+                                                        },
+                                                        enumSource:[{
+                                                            source:"data",
+                                                            value:"{{item.staffStatus}}"
+                                                        }]
+                                                        
+        
+                                                    }
+                                                }
+                                            
+                                            }
+                                        },
+                                        role:{
+                                            type:"string",
+                                            enum:['student','operator','manager','endorser']
+                                        }
+
                                     }
                                 }
                             }
-                        },
-                        studentNo:{
-                            type:"string"
-                        },
-                        firstName:{
-                            type:"string"
-                        },
-                        lastName:{
-                            type:"string"
-                        },
-                        planCode:{
-                            type:"string"
-                        },
-                        studyYear:{
-                            type:"string"
-                        },
-                        mobile:{
-                            type:"string"
-                        },
-                        email:{
-                            type:"string"
-                        },
-                        address:{
-                            type:"string",
-                            format:"textarea"
-                        },
-                        CGA:{
-                            type:"number"
-                        },
-                        remakrs:{
-                            type:"string"
-                        },
-                        total: {
-                            type: "number",
-                            default: 0,
-                            watch: {
-                                "data": "table"
-                            },
-                            "template": "calcTotal",
+                            ,
+                            total: {
+                                type: "number",
+                                default: 0,
+                                watch: {
+                                    "data": "table"
+                                },
+                                "template": "calcTotal",
 
+                            }
                         }
-                    }
-                },
-                theme:''
-            });
+                    },
+                    theme: 'bootstrap4'
+                });
 
 
-            $('#submit').click(function () {
-                console.log(editor.getValue())
+                let keys = Object.keys(editor.schema.properties)
+                let html = ''
+                if (!keys || keys.length == 0) keys = []
+
+                keys.forEach((e) => {
+                    html += `<li class=""> <a href="#root[${e}]"> ${e} </a> </li>`
+                })
+                $('#menu').append(html)
+
+
+                $('#submit').click(function () {
+                    console.log(editor.getValue())
+                })
+
+
             })
 
-
-        })
-
-    </script>
+        </script>
 
 </body>
 
