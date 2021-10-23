@@ -6,6 +6,7 @@ const cron = require('node-cron')
 const chalk = require('chalk')
 
 app.use('*', function (req, res, next) {
+    res.end('nodemailer running')
 
 
 })
