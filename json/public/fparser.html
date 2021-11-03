@@ -1,0 +1,145 @@
+<html>
+
+<head>
+    <script src="/lib/fparser.js"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+        integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"
+        integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+        crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"
+        integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@latest/dist/jsoneditor.min.js"></script>
+
+    <script>
+        window.JSONEditor.defaults.callbacks.template = {
+            "fparse": (jsoneditor, e) => {
+                let fObj = new Formula(e.data)
+                let result = fObj.getVariables().map(o => ({ value: o }))
+                return jsoneditor.schema.default = result
+
+            },
+            "eval": (jsoneditor, e) => {
+                let formula = new Formula(e.formula)
+                let variables = e.variables 
+                let variablesObj = {}
+
+                variables.forEach((e)=>{
+                    variablesObj[e.variables]=e.value
+                })
+
+                debugger
+                
+                
+                
+                let result = formula.evaluate(variablesObj)
+                return result
+
+
+            },
+
+
+        }
+
+        $(document).ready(function () {
+
+
+
+            $('#formula').change(function (e) {
+                let formula = e.currentTarget.value
+
+
+                const fObj = new Formula(formula)
+                let variables = fObj.getVariables()
+                $('#ans').addClass('alert alert-info').html(variables)
+
+
+
+
+                let mom = $('#mom').val()
+                let dad = $('#dad').val()
+
+                let result = fObj.evaluate({ x: mom, y: dad }); // result = 18
+
+
+                $('#ans').addClass('alert alert-info').html(result)
+
+
+            })
+
+            let temp = [{ 'value': 1 }]
+            var schema = {
+                type: 'object',
+                title: ' ',
+                properties: {
+                    formula: {
+                        type: "string"
+                    },
+                    variables: {
+                        type: "array",
+                        format: "table",
+                        items: {
+                            type: "object",
+                            properties: {
+                                variables: {
+                                    type: 'string'
+
+                                },
+                                value: {
+                                    type: "string",
+                                    watch: {
+                                        "data": "formula"
+                                    },
+
+                                },
+
+                            }
+
+                        }
+
+                    },
+                    result: {
+                        type: 'string',
+                        template: "eval",
+                        watch: {
+                            variables: "variables",
+                            formula:"formula"
+                        }
+
+                    }
+                }
+            }
+
+            console.log(schema)
+            var editor = new JSONEditor(document.getElementById('editor'), {
+                theme: 'bootstrap4',
+                schema
+            })
+
+
+
+        })
+    </script>
+</head>
+
+<body class="container">
+    <div>
+        <div class="row">
+            <input id="formula" type="text" class="form-control">
+            <input id="mom" type="text" class="form-control" placeholder="mom">
+
+            <input id="dad" type="text" class="form-control" placeholder="dad">
+
+            <div id="ans"></div>
+            <div id="editor"></div>
+
+        </div>
+        FParser
+    </div>
+</body>
+
+</html>
