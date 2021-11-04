@@ -18,24 +18,32 @@
     <script>
         window.JSONEditor.defaults.callbacks.template = {
             "fparse": (jsoneditor, e) => {
-                let fObj = new Formula(e.data)
-                let result = fObj.getVariables().map(o => ({ value: o }))
-                return jsoneditor.schema.default = result
 
+
+                let fObj = new Formula(e.data)
+                let result = fObj.getVariables().map(o => ({ variables: o }))
+
+                return result
             },
             "eval": (jsoneditor, e) => {
+                if (!e.formula) return
+
                 let formula = new Formula(e.formula)
-                let variables = e.variables 
+                let variables = e.variables
+
+                let variables_count = formula.getVariables()
                 let variablesObj = {}
 
-                variables.forEach((e)=>{
-                    variablesObj[e.variables]=e.value
+                if(variables_count.length != variables.length) return
+
+                if (!variables) return
+
+                variables.forEach((e) => {
+                    variablesObj[e.variables] = e.value
                 })
 
-                debugger
-                
-                
-                
+
+
                 let result = formula.evaluate(variablesObj)
                 return result
 
@@ -71,13 +79,20 @@
 
             })
 
-            let temp = [{ 'value': 1 }]
             var schema = {
                 type: 'object',
                 title: ' ',
                 properties: {
                     formula: {
                         type: "string"
+                    },
+                    test: {
+                        type: "string",
+                        watch: {
+                            data: "formula"
+                        },
+                        template: "fparse"
+
                     },
                     variables: {
                         type: "array",
@@ -86,14 +101,13 @@
                             type: "object",
                             properties: {
                                 variables: {
-                                    type: 'string'
+                                    type: 'string',
+                                    readonly: true
 
                                 },
                                 value: {
                                     type: "string",
-                                    watch: {
-                                        "data": "formula"
-                                    },
+
 
                                 },
 
@@ -104,10 +118,10 @@
                     },
                     result: {
                         type: 'string',
-                        template: "eval",
+                        template:"eval",
                         watch: {
                             variables: "variables",
-                            formula:"formula"
+                            formula: "formula"
                         }
 
                     }
@@ -119,6 +133,33 @@
                 theme: 'bootstrap4',
                 schema
             })
+
+            const watcherCallback = async function (path) {
+                console.log(`field with path: [${path}] changed to [${JSON.stringify(this.getEditor(path).getValue())}]`);
+
+
+
+                if (path == 'root.test') {
+                    let getVariables = editor.getEditor('root.test').getValue()
+                    let variables = editor.getEditor('root.variables').getValue()
+
+                    let data = JSON.parse(getVariables)
+                    debugger
+                    editor.getEditor('root.variables').setValue(data)
+
+
+
+                }
+
+
+
+            }
+            for (let key in editor.editors) {
+                if (editor.editors.hasOwnProperty(key) && key !== 'root') {
+                    editor.watch(key, watcherCallback.bind(editor, key));
+                }
+            }
+
 
 
 
