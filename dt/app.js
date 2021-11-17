@@ -3,10 +3,17 @@ const app = express();
 
 //const api = require('./api')
 
+app.get('/',function(req,res,next){
+    
+    console.log(req.protocol)
 
+    res.end('https://'+req.get('host')+req.url)
+
+})
 
 app.use(express.static('www'))
 app.get('/',function(req,res,next){
+    
 
     res.end('Ok')
 
